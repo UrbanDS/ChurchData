@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}" />
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  </head>
+ 
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#get_data").click(function() {
+        $.getJSON('/get_word', function(dat) {
+          $("#language").include(dat);
+        });
+      });
+    });
+  </script>
+ 
+  <div class='all'>
+    <div class="parent">
+      <h1>Ajax call</h1>
+      <div class="one">
+        <button id='get_data'>Language</button>
+      </div>
+      <div class="two" id="language">
+       
+      </div>
+    </div>
+  </div>
+</html>
