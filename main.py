@@ -173,13 +173,35 @@ def index():
 <head>
   <meta charset="utf-8">
   <title>Title</title>
+    <style>
+         html {
+          background-color: #333;
+          font-family: Optima;
+      }
+
+      h1 {
+          font-family: cursive;
+      }
+        body {
+            display: flex;
+            flex-flow: column;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 5px 0 black;
+            padding: 10px 40px;
+            box-shadow: 0 0 5px 0 black;
+            background: white;
+        }
+       
+    </style>
 </head>
 <body>
+    <h1>Church Distribution</h1>
 <div>
 <form enctype="multipart/form-data" method="post" name="fileinfo">
   <label>File to upload:</label>
-  <input type="file" name="file" required /><br>
-  <input type="text" name="query" id="query" required />
+  <input type="file" name="file" value="data.csv" required /><br>
+  <input type="text" name="query" id="query" value = ',,,,,,' required />
   <label>Please Type the query here</label><br>
   <label> Query Format[Primary Image[1-9],Overt Political[0-2],Biblical[0/1],Has Suffering[0/1],Has Affection[0/1],Dedication[0/1],Active Devotion[0/1]]:</label><br>
   <input type="submit" value="Upload the file!" />
@@ -187,7 +209,7 @@ def index():
 </div>
 <div id="resultimg">
 </div>
-<div style="background-color:white;position: fixed; bottom: 50px; left: 50px; width: 300px; height: 100px;border:2px solid grey; z-index:9999; font-size:14px;">&nbsp; Top Controller Enables of Data of given query <br>&nbsp; Bottom Controller can be used to view the centers per century<br>&nbsp;Blue spots are centers;</font></div>       
+<div style="background-color:white;position: fixed; bottom: 50px; left: 50px; width: 300px; height: 100px;border:2px solid grey; z-index:9999; font-size:14px;">&nbsp; Top Controller Enables of Data of given query <br>&nbsp; Bottom Controller can be used to view the centers per century<br>&nbsp;Blue spots are centers;</font></div>
 
 <script>
 var form = document.forms.namedItem("fileinfo");
@@ -197,11 +219,12 @@ form.addEventListener('submit', function(ev) {
   oReq.open("POST", "{{url_for('index')}}", true);
   oReq.onload = function(oEvent) {
     if (oReq.status == 200) {
-       document.getElementById('resultimg').innerHTML='<iframe height="700" width="1500" src="'+JSON.parse(oReq.responseText).result_image_location+'"></iframe>';
+       document.getElementById('resultimg').innerHTML='<iframe height="1100px" width="720px" src="'+JSON.parse(oReq.responseText).result_image_location+'"></iframe>';
     } else {
       alert("Error " + oReq.status + " occurred when trying to upload your file")
     }
   };
+  console.log(form)
   oReq.send(oData);
   ev.preventDefault();
 }, false);
