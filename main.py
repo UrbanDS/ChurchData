@@ -218,7 +218,9 @@ def index():
     fname_after_processing = "Italy.html"
     import time
     time.sleep(3)
-    # return jsonify({'result_image_location': url_for('static', filename=fname_after_processing)})
-    return html
+
+    if request.method == 'GET':
+        return html
+    return jsonify({'result_image_location': url_for('static', filename=fname_after_processing)})
 
 app.run(debug=True)
