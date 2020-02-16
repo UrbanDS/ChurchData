@@ -8,6 +8,9 @@ from folium.plugins import MarkerCluster
 from jinja2 import Template 
 from folium.map import Layer
 from werkzeug.utils import secure_filename
+
+BASE_DIR = os.path.dirname((os.path.abspath(__file__)))
+
 #Class to have single controller for all layers
 class HeatMapWithTimeAdditional(Layer):
     _template = Template("""
@@ -49,55 +52,18 @@ if not os.path.isdir("./static"):  # just for this example
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    html = render_template_string('''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>Title</title>
-    </head>
-    <body>
-    <div>
-    <form enctype="multipart/form-data" method="post" name="fileinfo">
-      <label>File to upload:</label>
-      <input type="file" name="file" required /><br>
-      <input type="text" name="query" id="query" required />
-      <label>Please Type the query here</label><br>
-      <label> Query Format[Primary Image[1-9],Overt Political[0-2],Biblical[0/1],Has Suffering[0/1],Has Affection[0/1],Dedication[0/1],Active Devotion[0/1]]:</label><br>
-      <input type="submit" value="Upload the file!" />
-    </form>
-    </div>
-    <div id="resultimg">
-    <iframe height="700" width="1500" src="/static/Italy.html"></iframe>
-    </div>
-    <div style="background-color:white;position: fixed; bottom: 50px; left: 50px; width: 300px; height: 100px;border:2px solid grey; z-index:9999; font-size:14px;">&nbsp; Top Controller Enables of Data of given query <br>&nbsp; Bottom Controller can be used to view the centers per century<br>&nbsp;Blue spots are centers;</font></div>       
-
-    <script>
-    var form = document.forms.namedItem("fileinfo");
-    form.addEventListener('submit', function(ev) {
-      var oData = new FormData(form);
-      var oReq = new XMLHttpRequest();
-      oReq.open("POST", "{{url_for('index')}}", true);
-      oReq.onload = function(oEvent) {
-        if (oReq.status == 200) {
-           document.getElementById('resultimg').innerHTML='<iframe height="700" width="1500" src="'+JSON.parse(oReq.responseText).result_image_location+'"></iframe>';
-        } else {
-          alert("Error " + oReq.status + " occurred when trying to upload your file")
-        }
-      };
-      oReq.send(oData);
-      ev.preventDefault();
-    }, false);
-    </script>
-    </body>
-    </html>
-    ''')
+    html = ''
+    with open( BASE_DIR + '/test_page.html', "r") as f:
+        html = f.read()
+    # print(html)
+    # exit()
+    html = render_template_string(html)
 
     if request.method == 'POST':
         file = request.files['file']
         query = str(request.form.get('query'))
         arr_query=query.split(',')
-        print(arr_query)
+        print(query)
         fname = secure_filename(file.filename)
         file.save('static/' + fname)
         df_incidents = pd.read_csv('static/' + fname)
@@ -224,3 +190,46 @@ def index():
     return jsonify({'result_image_location': url_for('static', filename=fname_after_processing)})
 
 app.run(debug=True)
+''' <div class='choose'>
+        <div>
+            <p>Biblical:</p>
+            <label for="Biblical0">ON</label>
+            <input id="Biblical0" name="biblical" type="radio" checked="true">
+            <br>
+            <label for="Biblical1">OFF</label>
+            <input id="Biblical1" name="biblical" type="radio">
+        </div>
+        <div>
+            <p>Suffering:</p>
+            <label for="Suffering0">ON</label>
+            <input id="Suffering0" name="Has_Suffering" type="radio" checked="true">
+            <br>
+            <label for="Suffering1">OFF</label>
+            <input id="Suffering1" name="Has_Suffering" type="radio">
+        </div>
+        <div>
+            <p>Affection:</p>
+            <label for="Affection0">ON</label>
+            <input id="Affection0" name="Has_Affection" type="radio" checked="true">
+            <br>
+            <label for="Affection1">OFF</label>
+            <input id="Affection1" name="Has_Affection" type="radio">
+        </div>
+        <div>
+            <p>Dedication:</p>
+            <label for="Dedication0">ON</label>
+            <input id="Dedication0" name="Has_Dedication" type="radio" checked="true">
+            <br>
+            <label for="Dedication1">OFF</label>
+            <input id="Dedication1" name="Has_Dedication" type="radio">
+        </div>
+        <div>
+            <p>Devotion:</p>
+            <label for="Devotion0">ON</label>
+            <input id="Devotion0" name="Active_Devotion" type="radio" checked="true">
+            <br>
+            <label for="Dedication1">OFF</label>
+            <input id="Dedication1" name="Active_Devotion" type="radio">
+
+        </div>
+    </div>'''
