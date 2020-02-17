@@ -60,12 +60,16 @@ def index():
     html = render_template_string(html)
 
     if request.method == 'POST':
-        file = request.files['file']
         query = str(request.form.get('query'))
-        arr_query=query.split(',')
+        arr_query = query.split(',')
         print(query)
-        fname = secure_filename(file.filename)
-        file.save('static/' + fname)
+        try:
+            file = request.files['file']
+            fname = secure_filename(file.filename)
+            file.save('static/' + fname)
+        except:
+            fname = 'data_new.csv'
+            print("=== filename:", fname)
         df_incidents = pd.read_csv('static/' + fname)
         df_incidents.rename(columns={"Primary Image": "Primary_Image","Century of Origin": "Century_of_Origin","Active Devotion Y = 1 ; N = 0":"Active_Devotion","Overt Political: 0=no; 1=communal; 2=Papal":"Overt_Political","Has suffering? Y=1, N=0":"Has_Suffering","Has affection? Y=1, N=0 (based on interaction of members in the shrines themselves, not towards the audience/viewer)":"Has_Affection","Not Biblical = 0 Biblical = 1; ":"Has_Biblical"},inplace=True)
         # print("df_incidents===", df_incidents)
