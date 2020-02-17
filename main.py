@@ -68,22 +68,24 @@ def index():
         file.save('static/' + fname)
         df_incidents = pd.read_csv('static/' + fname)
         df_incidents.rename(columns={"Primary Image": "Primary_Image","Century of Origin": "Century_of_Origin","Active Devotion Y = 1 ; N = 0":"Active_Devotion","Overt Political: 0=no; 1=communal; 2=Papal":"Overt_Political","Has suffering? Y=1, N=0":"Has_Suffering","Has affection? Y=1, N=0 (based on interaction of members in the shrines themselves, not towards the audience/viewer)":"Has_Affection","Not Biblical = 0 Biblical = 1; ":"Has_Biblical"},inplace=True)
+        # print("df_incidents===", df_incidents)
+
         df_filtered=df_incidents.copy()
         if arr_query[0]!='':
-            df_filtered=df_filtered[df_incidents['Primary_Image']==int(arr_query[0])]
+            df_filtered=df_filtered[df_filtered['Primary_Image']==int(arr_query[0])]
         if arr_query[1]!='':
-             df_filtered=df_filtered[df_incidents['Overt_Political']==int(arr_query[1])]
+             df_filtered=df_filtered[df_filtered['Overt_Political']==int(arr_query[1])]
         if arr_query[2]!='':    
-             df_filtered=df_filtered[df_incidents['Has_Biblical']==int(arr_query[2])]
+             df_filtered=df_filtered[df_filtered['Has_Biblical']==int(arr_query[2])]
         if arr_query[3]!='':      
-             df_filtered=df_filtered[df_incidents['Has_Suffering']==int(arr_query[3])]
+             df_filtered=df_filtered[df_filtered['Has_Suffering']==int(arr_query[3])]
         if arr_query[4]!='':      
-             df_filtered=df_filtered[df_incidents['Has_Affection']==int(arr_query[4])]
+             df_filtered=df_filtered[df_filtered['Has_Affection']==int(arr_query[4])]
         if arr_query[5]!='':      
-             df_filtered=df_filtered[df_incidents['Dedication']==int(arr_query[5])]
+             df_filtered=df_filtered[df_filtered['Dedication']==int(arr_query[5])]
         if arr_query[6]!='':       
-             df_filtered=df_filtered[df_incidents['Active_Devotion']==int(arr_query[6])]
-        print(len(df_filtered))
+             df_filtered=df_filtered[df_filtered['Active_Devotion']==int(arr_query[6])]
+
         df_incidents_cp=df_incidents.copy()
     elif request.method == 'GET':
         if os.path.exists('./static/Italy.html'):
@@ -98,7 +100,8 @@ def index():
                                      "Has affection? Y=1, N=0 (based on interaction of members in the shrines themselves, not towards the audience/viewer)": "Has_Affection",
                                      "Not Biblical = 0 Biblical = 1; ": "Has_Biblical"}, inplace=True)
         df_filtered = df_incidents.copy()
-
+    print("length: ", len(df_filtered))
+    print(df_filtered.head())
     df_incidents=df_filtered.copy()
     #df_incidents = pd.read_csv('data.csv')
     #print('Dataset downloaded and read into a pandas dataframe!')
@@ -122,7 +125,7 @@ def index():
     centuries=[]
     centuries=df_incidents.Century_of_Origin.sort_values().unique()
     centuries=list(centuries)
-    print(centuries)
+    print("centuries", centuries)
 
     HeatMapWithTime(df_century_list,  show=True,radius=15, index=centuries, position='topright', name='Query Output',control=True).add_to(Italy_map)
     #HeatMapWithTime(df_century_list, radius=5, gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 1: 'red'}, min_opacity=0.5, max_opacity=0.8, use_local_extrema=True).add_to(Italy_map)
@@ -147,7 +150,7 @@ def index():
         sumy=0
         meanx=0
         meany=0
-    print(df_century_centers)
+    print("df_century_centers", df_century_centers)
     #folium.TileLayer('Stamen Terrain').add_to(Italy_map)
     #folium.TileLayer('Stamen Toner').add_to(Italy_map)
     #folium.TileLayer('stamenwatercolor').add_to(Italy_map)
@@ -169,12 +172,12 @@ def index():
     Italy_map.save("Temp.html")
 
     #To always use stable v1.1.0 of github HeatMapWithTime
-    new_file= open("static/Italy.html","w+")
+    new_file= open("static/Italy.html","w")
     F = open("Temp.html","r")
     for i in F:
         #print(F.readline())
         if("https://rawcdn.githack.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js" in i):
-            print(i)
+            # print(i)
             new_file.write(i.replace("https://rawcdn.githack.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.min.js","https://rawcdn.githack.com/socib/Leaflet.TimeDimension/v1.1.0/dist/leaflet.timedimension.min.js"))
         else:
             new_file.write(i)

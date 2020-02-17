@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <META HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <META HTTP-EQUIV="expires" CONTENT="0">
     <title>Title</title>
     <style>
         html {
@@ -37,7 +40,8 @@
     <input type="file" name="file" required/><br>
     <input type="hidden" name='query' id='tt' value="qqq"/>
     <label for="Primary_Image">Primary Image</label>
-    <select id="Primary_Image" name="Primary Image" required>
+    <select id="Primary_Image" name="Primary Image" >
+        <option value="">All</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -48,30 +52,44 @@
         <option value="8">8</option>
         <option value="9">9</option>
     </select>
-    <label for="Political">Political</label>
-    <select id="Political" name="Political" required>
+    <label for="Political">Political:</label>
+    <select id="Political" name="Political" >
+        <option value="">All</option>
         <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
     </select>
+    <label for="Biblical0">Biblical:</label>
+    <select id="Biblical0" name="Biblical0">
+        <option value="">All</option>
+        <option value="0">0</option>
+        <option value ='1'>1</option>
+    </select>
+    <label for="Suffering0">Suffering:</label>
+    <select id="Suffering0" name="Suffering0">
+        <option value="">All</option>
+        <option value="0">0</option>
+        <option value ='1'>1</option>
+    </select>
+    <label for="Affection0">Affection:</label>
+    <select id="Affection0" name="Affection0">
+        <option value="">All</option>
+        <option value="0">0</option>
+        <option value ='1'>1</option>
+    </select>
+    <label for="Dedication0">Dedication:</label>
+    <select id="Dedication0" name="Dedication0">
+        <option value="">All</option>
+        <option value="0">0</option>
+        <option value ='1'>1</option>
+    </select>
+    <label for="Devotion0">Devotion:</label>
+    <select id="Devotion0" name="Devotion0" >
+        <option value="">All</option>
+        <option value="0">0</option>
+        <option value ='1'>1</option>
+    </select>
 
-
-    <p>Choose the Option:</p>
-      <label for="Biblical0">Biblical:</label>
-      <input id="Biblical0" name="choose_option" type="checkbox" value="Biblical">
-      &nbsp
-      <label for="Suffering0">Suffering:</label>
-      <input id="Suffering0" name="choose_option" type="checkbox" value="Suffering">
-      &nbsp
-      <label for="Affection0">Affection:</label>
-      <input id="Affection0" name="choose_option" type="checkbox" value="Affection">
-      &nbsp
-      <label for="Dedication0">Dedication:</label>
-      <input id="Dedication0" name="choose_option" type="checkbox" value="Dedication">
-      &nbsp
-      <label for="Devotion0">Devotion:</label>
-      <input id="Devotion0" name="choose_option" type="checkbox" value="Devotion">
-    <br>
     <input type="submit" value="Upload the file!" id='upload'/>
 
 </form>
@@ -79,7 +97,7 @@
 </div>
 
 
-<div id="resultimg"><iframe height="800" width="1200" src="/static/Italy.html"></iframe>
+<div id="resultimg"><iframe id="fframe" height="800" width="1200" src="/static/Italy.html"></iframe>
 </div>
 <div style="background-color:white;position: fixed; bottom: 50px; left: 50px; width: 300px; height: 100px;border:2px solid grey; z-index:9999; font-size:14px;">
     &nbsp; Top Controller Enables of Data of given query <br>&nbsp; Bottom Controller can be used to view the centers
@@ -91,45 +109,19 @@
     form.addEventListener('submit', function (ev) {
         var oData = new FormData(form);
         var oReq = new XMLHttpRequest();
-        var v1
-        var v2
-        var v3
-        var v4
-        var v5
-        if (document.getElementById('Biblical0').checked === true) {
-            v1 = '1'
-        } else {
-            v1 = '0'
-        }
-        if (document.getElementById('Suffering0').checked === true) {
-            v2 = '1'
-        } else {
-            v2 = '0'
-        }
-        if (document.getElementById('Affection0').checked === true) {
-            v3 = '1'
-        } else {
-            v3 = '0'
-        }
-        if (document.getElementById('Dedication0').checked === true) {
-            v4 = '1'
-        } else {
-            v4 = '0'
-        }
-        if (document.getElementById('Devotion0').checked === true) {
-            v5 = '1'
-        } else {
-            v5 = '0'
-        }
-
-        const v = document.getElementById('Primary_Image').value + ',' + document.getElementById('Political').value + ',' + v1 + ',' + v2 + ',' + v3 + ',' + v4 + ',' + v5
+        const v = document.getElementById('Primary_Image').value + ',' + document.getElementById('Political').value + ',' + document.getElementById('Biblical0').value + ',' + document.getElementById('Suffering0').value + ',' + document.getElementById('Affection0').value + ',' + document.getElementById('Dedication0').value + ',' + document.getElementById('Devotion0').value
         console.log(v)
 
 
         oReq.open("POST", "{{url_for('index')}}", true);
         oReq.onload = function (oEvent) {
             if (oReq.status == 200) {
-                document.getElementById('resultimg').innerHTML = '<iframe height="800" width="1200" src="' + JSON.parse(oReq.responseText).result_image_location + '"></iframe>';
+                var new_loc = JSON.parse(oReq.responseText).result_image_location + "?" + "time="+(new Date()).getTime();
+                console.log("new_loc", new_loc);
+
+                document.getElementById('resultimg').innerHTML = '<iframe height="800" width="1200" src="' + new_loc + '"></iframe>';
+
+                window.location.replace("/")
             } else {
                 alert("Error " + oReq.status + " occurred when trying to upload your file")
             }
