@@ -5,7 +5,7 @@
     <META HTTP-EQUIV="pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
     <META HTTP-EQUIV="expires" CONTENT="0">
-    <title>Title</title>
+    <title>Diffusion Analytics of the Edicole Sacre (Street Shrines) of Rome</title>
     <style>
         html {
             background-color: #333;
@@ -33,7 +33,7 @@
     </style>
 </head>
 <body>
-<h1>Church Distribution</h1>
+<h1>Diffusion Analytics of the Edicole Sacre (Street Shrines) of Rome</h1>
 
 <form enctype="multipart/form-data" method="post" name="fileinfo">
     <label>File to upload:</label>
@@ -96,14 +96,14 @@
         <option value ='1'>1</option>
     </select>
     &nbsp
-    <input type="submit" value="Upload the file!" id='upload'/>
+    <input type="submit" value="Upload and Search" id='upload'/>
 
 </form>
 <div>
 </div>
 
 <br>
-<div id="resultimg"><iframe id="fframe" height="800" width="1200" src="/map"></iframe>
+<div id="resultimg"><iframe id="fframe" height="800" width="1200" src="/map?token=init"></iframe>
 </div>
 
 <script>
@@ -118,8 +118,8 @@
         oReq.open("POST", "{{url_for('index')}}", true);
         oReq.onload = function (oEvent) {
             if (oReq.status == 200) {
-                {#var new_loc = JSON.parse(oReq.responseText).result_image_location + "?" + "time="+(new Date()).getTime();#}
-                var new_loc = '/map';
+                var token = JSON.parse(oReq.responseText).result_image_location;
+                var new_loc = '/map?token=' + token;
                 console.log("new_loc", new_loc);
 
                 document.getElementById('resultimg').innerHTML = '<iframe height="800" width="1200" src="' + new_loc + '"></iframe>';

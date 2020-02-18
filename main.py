@@ -4,6 +4,7 @@ import pandas as pd
 import folium
 from folium.plugins import HeatMapWithTime
 from folium.plugins import MarkerCluster
+import time
 
 from jinja2 import Template 
 from folium.map import Layer
@@ -51,11 +52,21 @@ if not os.path.isdir("./static"):  # just for this example
 
 app = Flask(__name__)
 
-@app.route('/map', methods=['GET', 'POST'])
+@app.route('/map', methods=['GET'])
 def mymap():
+    token = request.args.get("token")
+    # print("=== token", token)
+    filename = "static/Italy" + token + ".html"
+
+    if token == 'init' or not os.path.exists(filename):
+        filename = "static/Italyinit.html"
+    # print("=== filename", filename)
+
     html = ''
-    with open("static/Italy.html", 'r') as f:
+    with open(filename, 'r') as f:
         html = f.read()
+    if token != 'init' and os.path.exists(filename):
+        os.remove(filename)
     return html
 
 @app.route('/', methods=['GET', 'POST'])
@@ -71,15 +82,15 @@ def index():
     if request.method == 'POST':
         query = str(request.form.get('query'))
         arr_query = query.split(',')
-        print(query)
+        # print(query)
         try:
             file = request.files['file']
             fname = secure_filename(file.filename)
             file.save('static/' + fname)
-            print("=== file saved: ", fname)
+            # print("=== file saved: ", fname)
         except:
             fname = 'data_new.csv'
-            print("=== filename:", fname)
+            # print("=== filename:", fname)
         df_incidents = pd.read_csv('static/' + fname)
         df_incidents.rename(columns={"Primary Image": "Primary_Image","Century of Origin": "Century_of_Origin","Active Devotion Y = 1 ; N = 0":"Active_Devotion","Overt Political: 0=no; 1=communal; 2=Papal":"Overt_Political","Has suffering? Y=1, N=0":"Has_Suffering","Has affection? Y=1, N=0 (based on interaction of members in the shrines themselves, not towards the audience/viewer)":"Has_Affection","Not Biblical = 0 Biblical = 1; ":"Has_Biblical"},inplace=True)
         # print("df_incidents===", df_incidents)
@@ -109,8 +120,8 @@ def index():
 
         df_incidents_cp=df_incidents.copy()
 
-        print("length: ", len(df_filtered))
-        print(df_filtered.head())
+        # print("length: ", len(df_filtered))
+        # print(df_filtered.head())
         df_incidents=df_filtered.copy()
         #df_incidents = pd.read_csv('data.csv')
         #print('Dataset downloaded and read into a pandas dataframe!')
@@ -134,7 +145,7 @@ def index():
         centuries=[]
         centuries=df_incidents.Century_of_Origin.sort_values().unique()
         centuries=list(centuries)
-        print("centuries", centuries)
+        # print("centuries", centuries)
 
         HeatMapWithTime(df_century_list,  show=True,radius=15, index=centuries, position='topright', name='Query Output',control=True).add_to(Italy_map)
         #HeatMapWithTime(df_century_list, radius=5, gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'orange', 1: 'red'}, min_opacity=0.5, max_opacity=0.8, use_local_extrema=True).add_to(Italy_map)
@@ -159,7 +170,7 @@ def index():
             sumy=0
             meanx=0
             meany=0
-        print("df_century_centers", df_century_centers)
+        # print("df_century_centers", df_century_centers)
         #folium.TileLayer('Stamen Terrain').add_to(Italy_map)
         #folium.TileLayer('Stamen Toner').add_to(Italy_map)
         #folium.TileLayer('stamenwatercolor').add_to(Italy_map)
@@ -181,7 +192,9 @@ def index():
         Italy_map.save("Temp.html")
 
         #To always use stable v1.1.0 of github HeatMapWithTime
-        new_file= open("static/Italy.html","w")
+        token = str(int(time.time()))
+        new_filename = "static/Italy" + token + ".html"
+        new_file= open(new_filename, "w")
         F = open("Temp.html","r")
         for i in F:
             #print(F.readline())
@@ -194,9 +207,8 @@ def index():
         F.close()
         # do the processing here and save the new file in static/
         fname_after_processing = "Italy.html"
-        import time
         time.sleep(3)
-        # return jsonify({'result_image_location': url_for('static', filename=fname_after_processing)})
+        return jsonify({'result_image_location': token})
 
     return render_template('index.html')
 
