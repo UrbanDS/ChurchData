@@ -103,11 +103,7 @@
 </div>
 
 <br>
-<div id="resultimg"><iframe id="fframe" height="800" width="1200" src="/static/Italy.html"></iframe>
-</div>
-<div style="background-color:white;position: fixed; bottom: 50px; left: 50px; width: 300px; height: 100px;border:2px solid grey; z-index:9999; font-size:14px;">
-    &nbsp; Top Controller Enables of Data of given query <br>&nbsp; Bottom Controller can be used to view the centers
-    per century<br>&nbsp;Blue spots are centers;
+<div id="resultimg"><iframe id="fframe" height="800" width="1200" src="/map"></iframe>
 </div>
 
 <script>
@@ -122,12 +118,12 @@
         oReq.open("POST", "{{url_for('index')}}", true);
         oReq.onload = function (oEvent) {
             if (oReq.status == 200) {
-                var new_loc = JSON.parse(oReq.responseText).result_image_location + "?" + "time="+(new Date()).getTime();
+                {#var new_loc = JSON.parse(oReq.responseText).result_image_location + "?" + "time="+(new Date()).getTime();#}
+                var new_loc = '/map';
                 console.log("new_loc", new_loc);
 
                 document.getElementById('resultimg').innerHTML = '<iframe height="800" width="1200" src="' + new_loc + '"></iframe>';
-
-                window.location.replace("/")
+                {#window.location.replace("/")#}
             } else {
                 alert("Error " + oReq.status + " occurred when trying to upload your file")
             }
